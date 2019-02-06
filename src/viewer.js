@@ -348,8 +348,8 @@ export default class ReactSVGPanZoom extends React.Component {
 
           <rect
             fill={props.background}
-            x={0}
-            y={0}
+            x={200}
+            y={200}
             width={value.viewerWidth}
             height={value.viewerHeight}
             style={{pointerEvents: "none"}}
