@@ -272,7 +272,7 @@ export default class ReactSVGPanZoom extends React.Component {
 
     return (
       <div
-        style={{position: "relative", width: value.viewerWidth, height: value.viewerHeight, ...props.style}}
+        style={{position: "relative", width: value.viewerWidth, height: value.viewerHeight, backgroundColor: "#101735", ...props.style}}
         className={this.props.className}>
         <svg
           ref={ViewerDOM => this.ViewerDOM = ViewerDOM}
@@ -346,28 +346,10 @@ export default class ReactSVGPanZoom extends React.Component {
             this.handleViewerEvent(event);
           }}>
 
-          <rect
-            fill={props.background}
-            x={200}
-            y={200}
-            width={value.viewerWidth}
-            height={value.viewerHeight}
-            style={{pointerEvents: "none"}}
-          />
-
           <g
-            transform={toSVG(value)}
+            transform={`${toSVG(value)} translate(-10000, -10000)`}
             style={blockChildEvents ? {pointerEvents: "none"} : {}}>
-            <rect
-              fill={this.props.SVGBackground}
-              style={this.props.SVGStyle}
-              x={0}
-              y={0}
-              width={value.SVGWidth}
-              height={value.SVGHeight}/>
-            <g>
               {props.children.props.children}
-            </g>
           </g>
 
           {!([TOOL_NONE, TOOL_AUTO].indexOf(tool) >= 0 && props.detectAutoPan && value.focus) ? null : (

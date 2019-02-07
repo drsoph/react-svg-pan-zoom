@@ -1110,7 +1110,8 @@ function (_React$Component) {
         style: _objectSpread({
           position: "relative",
           width: value.viewerWidth,
-          height: value.viewerHeight
+          height: value.viewerHeight,
+          backgroundColor: "#101735"
         }, props.style),
         className: this.props.className
       }, _react.default.createElement("svg", {
@@ -1198,28 +1199,12 @@ function (_React$Component) {
 
           _this2.handleViewerEvent(event);
         }
-      }, _react.default.createElement("rect", {
-        fill: props.background,
-        x: 200,
-        y: 200,
-        width: value.viewerWidth,
-        height: value.viewerHeight,
-        style: {
-          pointerEvents: "none"
-        }
-      }), _react.default.createElement("g", {
-        transform: (0, _transformationMatrix.toSVG)(value),
+      }, _react.default.createElement("g", {
+        transform: "".concat((0, _transformationMatrix.toSVG)(value), " translate(-10000, -10000)"),
         style: blockChildEvents ? {
           pointerEvents: "none"
         } : {}
-      }, _react.default.createElement("rect", {
-        fill: this.props.SVGBackground,
-        style: this.props.SVGStyle,
-        x: 0,
-        y: 0,
-        width: value.SVGWidth,
-        height: value.SVGHeight
-      }), _react.default.createElement("g", null, props.children.props.children)), !([_constants.TOOL_NONE, _constants.TOOL_AUTO].indexOf(tool) >= 0 && props.detectAutoPan && value.focus) ? null : _react.default.createElement("g", {
+      }, props.children.props.children), !([_constants.TOOL_NONE, _constants.TOOL_AUTO].indexOf(tool) >= 0 && props.detectAutoPan && value.focus) ? null : _react.default.createElement("g", {
         style: {
           pointerEvents: "none"
         }
