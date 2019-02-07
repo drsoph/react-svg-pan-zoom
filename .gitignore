@@ -8,5 +8,4 @@ npm-debug.log
 .DS_Store
 bower_components
 examples/*/yarn.lock
-build-*
 .cache
