@@ -162,10 +162,61 @@ export function onWheel(event, ViewerDOM, tool, value, props, coords = null) {
 
   if (!props.detectWheel) return value;
 
+
   let delta = Math.max(-1, Math.min(1, event.deltaY));
   let scaleFactor = mapRange(delta, -1, 1, props.scaleFactorOnWheel, 1 / props.scaleFactorOnWheel);
 
   let SVGPoint = getSVGPoint(value, x, y);
+  let nextValue = zoom(value, SVGPoint.x, SVGPoint.y, scaleFactor, props);
+
+  event.preventDefault();
+  return nextValue;
+}
+
+export function onDrag(event, ViewerDOM, tool, value, props, scaleFactor, coords = null) {
+  let x, y;
+  if (coords) {
+    ({x, y} = coords);
+  } else {
+    x = 350
+    y = 350
+  }
+
+  let SVGPoint = getSVGPoint(value, x, y)
+  let nextValue = zoom(value, SVGPoint.x, SVGPoint.y, scaleFactor, props);
+
+  event.preventDefault();
+  return nextValue;
+}
+
+export function zoomOut(event, ViewerDOM, tool, value, props, coords = null) {
+  let x, y;
+  if (coords) {
+    ({x, y} = coords);
+  } else {
+    x = 350
+    y = 350
+  }
+
+  let scaleFactor = 0.8
+  let SVGPoint = getSVGPoint(value, x, y)
+  let nextValue = zoom(value, SVGPoint.x, SVGPoint.y, scaleFactor, props);
+
+  event.preventDefault();
+  return nextValue;
+}
+
+export function zoomIn(event, ViewerDOM, tool, value, props, coords = null) {
+  let x, y;
+  if (coords) {
+    ({x, y} = coords);
+  } else {
+    x = 350
+    y = 350
+  }
+
+  let scaleFactor = 1.2
+  let SVGPoint = getSVGPoint(value, x, y)
   let nextValue = zoom(value, SVGPoint.x, SVGPoint.y, scaleFactor, props);
 
   event.preventDefault();

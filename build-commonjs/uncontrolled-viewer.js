@@ -39,12 +39,17 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(UncontrolledReactSVGPanZoom).call(this, props));
     _this.state = {
-      value: props.defaultValue || {},
+      value: props.defaultValue || {
+        a: 1,
+        d: 1
+      },
       tool: props.defaultTool || TOOL_NONE
     };
     _this.Viewer = null;
     _this.changeTool = _this.changeTool.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.changeValue = _this.changeValue.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.reCenter = _this.reCenter.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.handleSlider = _this.handleSlider.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
   }
 
@@ -108,6 +113,34 @@ function (_React$Component) {
       this.Viewer.closeMiniature();
     }
   }, {
+    key: "reCenter",
+    value: function reCenter() {
+      this.setState({
+        value: {
+          "a": 1,
+          "c": 0,
+          "e": 0,
+          "b": 0,
+          "d": 1,
+          "f": 0
+        }
+      });
+    }
+  }, {
+    key: "handleSlider",
+    value: function handleSlider(event, value) {
+      var scale = (value + 5) / 100 * 2;
+
+      if (scale >= 0.2) {
+        this.setState({
+          value: {
+            "a": scale,
+            "d": scale
+          }
+        });
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
@@ -122,7 +155,12 @@ function (_React$Component) {
       var _this$state = this.state,
           tool = _this$state.tool,
           value = _this$state.value;
-      return React.createElement(ReactSVGPanZoom, _extends({
+      return React.createElement("div", {
+        id: "uncontrolled",
+        onClick: function onClick() {
+          return console.log('UC', _this2.state);
+        }
+      }, React.createElement(ReactSVGPanZoom, _extends({
         width: width,
         height: height,
         tool: tool,
@@ -131,8 +169,14 @@ function (_React$Component) {
         onChangeValue: this.changeValue,
         ref: function ref(Viewer) {
           return _this2.Viewer = Viewer;
-        }
-      }, props));
+        },
+        reCenter: this.reCenter,
+        zoomFactor: this.state.value.a,
+        zoom: this.state.zoom,
+        scaleFactorMax: 2.5,
+        scaleFactorMin: 0.2,
+        handleSlider: this.handleSlider
+      }, props)));
     }
   }]);
 

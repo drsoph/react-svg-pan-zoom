@@ -21,7 +21,10 @@ import {
   onMouseEnterOrLeave,
   onMouseMove,
   onMouseUp,
-  onWheel
+  onWheel,
+  onDrag,
+  zoomOut,
+  zoomIn
 } from './features/interactions';
 import {onTouchCancel, onTouchEnd, onTouchMove, onTouchStart} from './features/interactions-touch';
 
@@ -57,7 +60,12 @@ import {
   TOOL_ZOOM_IN,
   TOOL_ZOOM_OUT
 } from './constants';
+
 import {printMigrationTipsRelatedToProps} from "./migration-tips";
+
+import ZoomIn from '@material-ui/icons/ZoomIn'
+import ZoomOut from '@material-ui/icons/ZoomOut'
+import Slider from '@material-ui/lab/Slider';
 
 export default class ReactSVGPanZoom extends React.Component {
 
@@ -274,6 +282,50 @@ export default class ReactSVGPanZoom extends React.Component {
       <div
         style={{position: "relative", width: value.viewerWidth, height: value.viewerHeight, backgroundColor: "#101735", ...props.style}}
         className={this.props.className}>
+        <div id="controls">
+          <div className="re-center" onClick={() => {
+            this.props.reCenter()
+          }}>
+            Re-center
+          </div>
+          <div id="zoom-bar">
+          <ZoomOut
+            className="zoom-out"
+            onClick={(event, value) => {
+              this.props.handleSlider(event, value)
+
+              let nextValue = zoomOut(event, this.ViewerDOM, this.getTool(), this.getValue(), this.props);
+              if (this.getValue() !== nextValue) this.setValue(nextValue);
+              this.handleViewerEvent(event);
+            }}
+          />
+          <Slider
+            onChange={(event, value) => {
+              this.props.handleSlider(event, value)
+
+              let scale = ((value + 5)/100)*2
+              let nextValue = onDrag(event, this.ViewerDOM, this.getTool(), this.getValue(), this.props, scale);
+              if (this.getValue() !== nextValue) this.setValue(nextValue);
+              this.handleViewerEvent(event);
+            }}
+            value={(this.props.zoomFactor/2)*100 -5}
+            max={100}
+            min={2}
+            step={0.1}
+          />
+          <ZoomIn
+            className="zoom-in"
+            onClick={(event, value) => {
+              this.props.handleSlider(event, value)
+
+              let nextValue = zoomIn(event, this.ViewerDOM, this.getTool(), this.getValue(), this.props);
+              if (this.getValue() !== nextValue) this.setValue(nextValue);
+              this.handleViewerEvent(event);
+              this.setState({ zoomFactor: value })
+            }}
+          />
+        </div>
+        </div>
         <svg
           ref={ViewerDOM => this.ViewerDOM = ViewerDOM}
           width={value.viewerWidth}
@@ -347,6 +399,7 @@ export default class ReactSVGPanZoom extends React.Component {
           }}>
 
           <g
+            id="viewer-group"
             transform={`${toSVG(value)} translate(-10000, -10000)`}
             style={blockChildEvents ? {pointerEvents: "none"} : {}}>
               {props.children.props.children}

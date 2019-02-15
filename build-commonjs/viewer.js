@@ -30,7 +30,7 @@ import eventFactory from './events/event-factory'; //features
 
 import { pan as _pan } from './features/pan';
 import { getDefaultValue, isValueValid, reset as _reset, setPointOnViewerCenter as _setPointOnViewerCenter, setSVGSize, setViewerSize, setZoomLevels } from './features/common';
-import { onDoubleClick as _onDoubleClick, onInterval, onMouseDown as _onMouseDown, onMouseEnterOrLeave, onMouseMove as _onMouseMove, onMouseUp as _onMouseUp, onWheel as _onWheel } from './features/interactions';
+import { onDoubleClick as _onDoubleClick, onInterval, onMouseDown as _onMouseDown, onMouseEnterOrLeave, onMouseMove as _onMouseMove, onMouseUp as _onMouseUp, onWheel as _onWheel, onDrag, zoomOut, zoomIn } from './features/interactions';
 import { onTouchCancel as _onTouchCancel, onTouchEnd as _onTouchEnd, onTouchMove as _onTouchMove, onTouchStart as _onTouchStart } from './features/interactions-touch';
 import { fitSelection as _fitSelection, fitToViewer as _fitToViewer, zoom as _zoom, zoomOnViewerCenter as _zoomOnViewerCenter } from './features/zoom';
 import { closeMiniature as _closeMiniature, openMiniature as _openMiniature } from './features/miniature'; //ui
@@ -43,6 +43,9 @@ import detectTouch from './ui/detect-touch';
 import Miniature from './ui-miniature/miniature';
 import { ACTION_PAN, ACTION_ZOOM, ALIGN_BOTTOM, ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, ALIGN_TOP, MODE_IDLE, MODE_PANNING, MODE_ZOOMING, POSITION_BOTTOM, POSITION_LEFT, POSITION_NONE, POSITION_RIGHT, POSITION_TOP, TOOL_AUTO, TOOL_NONE, TOOL_PAN, TOOL_ZOOM_IN, TOOL_ZOOM_OUT } from './constants';
 import { printMigrationTipsRelatedToProps } from "./migration-tips";
+import ZoomIn from '@material-ui/icons/ZoomIn';
+import ZoomOut from '@material-ui/icons/ZoomOut';
+import Slider from '@material-ui/lab/Slider';
 
 var ReactSVGPanZoom =
 /*#__PURE__*/
@@ -304,7 +307,54 @@ function (_React$Component) {
           backgroundColor: "#101735"
         }, props.style),
         className: this.props.className
-      }, React.createElement("svg", {
+      }, React.createElement("div", {
+        id: "controls"
+      }, React.createElement("div", {
+        className: "re-center",
+        onClick: function onClick() {
+          _this2.props.reCenter();
+        }
+      }, "Re-center"), React.createElement("div", {
+        id: "zoom-bar"
+      }, React.createElement(ZoomOut, {
+        className: "zoom-out",
+        onClick: function onClick(event, value) {
+          _this2.props.handleSlider(event, value);
+
+          var nextValue = zoomOut(event, _this2.ViewerDOM, _this2.getTool(), _this2.getValue(), _this2.props);
+          if (_this2.getValue() !== nextValue) _this2.setValue(nextValue);
+
+          _this2.handleViewerEvent(event);
+        }
+      }), React.createElement(Slider, {
+        onChange: function onChange(event, value) {
+          _this2.props.handleSlider(event, value);
+
+          var scale = (value + 5) / 100 * 2;
+          var nextValue = onDrag(event, _this2.ViewerDOM, _this2.getTool(), _this2.getValue(), _this2.props, scale);
+          if (_this2.getValue() !== nextValue) _this2.setValue(nextValue);
+
+          _this2.handleViewerEvent(event);
+        },
+        value: this.props.zoomFactor / 2 * 100 - 5,
+        max: 100,
+        min: 2,
+        step: 0.1
+      }), React.createElement(ZoomIn, {
+        className: "zoom-in",
+        onClick: function onClick(event, value) {
+          _this2.props.handleSlider(event, value);
+
+          var nextValue = zoomIn(event, _this2.ViewerDOM, _this2.getTool(), _this2.getValue(), _this2.props);
+          if (_this2.getValue() !== nextValue) _this2.setValue(nextValue);
+
+          _this2.handleViewerEvent(event);
+
+          _this2.setState({
+            zoomFactor: value
+          });
+        }
+      }))), React.createElement("svg", {
         ref: function ref(ViewerDOM) {
           return _this2.ViewerDOM = ViewerDOM;
         },
@@ -400,6 +450,7 @@ function (_React$Component) {
           _this2.handleViewerEvent(event);
         }
       }, React.createElement("g", {
+        id: "viewer-group",
         transform: "".concat(toSVG(value), " translate(-10000, -10000)"),
         style: blockChildEvents ? {
           pointerEvents: "none"

@@ -7,13 +7,15 @@ export default class UncontrolledReactSVGPanZoom extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      value: props.defaultValue || {},
+      value: props.defaultValue || {a: 1, d: 1},
       tool: props.defaultTool || TOOL_NONE,
     }
 
     this.Viewer = null;
     this.changeTool = this.changeTool.bind(this)
     this.changeValue = this.changeValue.bind(this)
+    this.reCenter = this.reCenter.bind(this)
+    this.handleSlider = this.handleSlider.bind(this)
   }
 
   changeTool(tool) {
@@ -60,18 +62,50 @@ export default class UncontrolledReactSVGPanZoom extends React.Component {
     this.Viewer.closeMiniature()
   }
 
+  reCenter() {
+    this.setState({
+      value: {
+        "a": 1,
+        "c": 0,
+        "e": 0,
+        "b": 0,
+        "d": 1,
+        "f": 0
+      }
+    })
+  }
+  handleSlider(event, value) {
+    let scale = ((value + 5)/100)*2
+    if(scale >= 0.2) {
+      this.setState({
+        value: {
+          "a": scale,
+          "d": scale
+        }
+      })
+    }
+  }
+
   render() {
     const {width, height, onChangeTool, onChangeValue, ...props} = this.props
     const {tool, value} = this.state
-
     return (
+      <div id="uncontrolled" onClick={() => console.log('UC', this.state)}>
+
       <ReactSVGPanZoom
         width={width} height={height}
         tool={tool} onChangeTool={this.changeTool}
         value={value} onChangeValue={this.changeValue}
         ref={Viewer => this.Viewer = Viewer}
+        reCenter={this.reCenter}
+        zoomFactor={this.state.value.a}
+        zoom={this.state.zoom}
+        scaleFactorMax={2.5}
+        scaleFactorMin={0.2}
+        handleSlider={this.handleSlider}
         {...props}
-      />
+        />
+      </div>
     )
   }
 }

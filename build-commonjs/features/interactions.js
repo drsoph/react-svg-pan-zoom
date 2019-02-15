@@ -184,6 +184,59 @@ export function onWheel(event, ViewerDOM, tool, value, props) {
   event.preventDefault();
   return nextValue;
 }
+export function onDrag(event, ViewerDOM, tool, value, props, scaleFactor) {
+  var coords = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : null;
+  var x, y;
+
+  if (coords) {
+    x = coords.x;
+    y = coords.y;
+  } else {
+    x = 350;
+    y = 350;
+  }
+
+  var SVGPoint = getSVGPoint(value, x, y);
+  var nextValue = zoom(value, SVGPoint.x, SVGPoint.y, scaleFactor, props);
+  event.preventDefault();
+  return nextValue;
+}
+export function zoomOut(event, ViewerDOM, tool, value, props) {
+  var coords = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
+  var x, y;
+
+  if (coords) {
+    x = coords.x;
+    y = coords.y;
+  } else {
+    x = 350;
+    y = 350;
+  }
+
+  var scaleFactor = 0.8;
+  var SVGPoint = getSVGPoint(value, x, y);
+  var nextValue = zoom(value, SVGPoint.x, SVGPoint.y, scaleFactor, props);
+  event.preventDefault();
+  return nextValue;
+}
+export function zoomIn(event, ViewerDOM, tool, value, props) {
+  var coords = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
+  var x, y;
+
+  if (coords) {
+    x = coords.x;
+    y = coords.y;
+  } else {
+    x = 350;
+    y = 350;
+  }
+
+  var scaleFactor = 1.2;
+  var SVGPoint = getSVGPoint(value, x, y);
+  var nextValue = zoom(value, SVGPoint.x, SVGPoint.y, scaleFactor, props);
+  event.preventDefault();
+  return nextValue;
+}
 export function onMouseEnterOrLeave(event, ViewerDOM, tool, value, props) {
   var coords = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
   var nextValue = setFocus(value, event.type === 'mouseenter');
